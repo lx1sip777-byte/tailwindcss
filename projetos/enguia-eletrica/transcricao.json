@@ -1,0 +1,1097 @@
+{
+ "audio": "narracao.mp3",
+ "duracao": 62.851,
+ "modelo": "large-v3-turbo",
+ "texto": "Como um peixe consegue produzir eletricidade dentro do próprio corpo? A enguia elétrica parece comum, mas esconde um sistema elétrico impressionante. Na espécie Electrophorus voltai, pesquisadores registraram até 860 volts. O segredo está em três órgãos elétricos que percorrem boa parte do corpo. Dentro deles, existem milhares de células musculares modificadas, chamadas eletrócitos. Cada célula produz uma pequena diferença elétrica. Sozinha, ela é fraca, mas as células ficam organizadas como pilhas em sequência. Então, sinais do sistema nervoso ativam muitas delas quase ao mesmo tempo. A soma dessas tensões gera uma descarga e cria um campo elétrico na água. Se outro animal estiver perto o suficiente, a descarga pode interferir nos seus músculos e nervos. Mas a enguia não usa eletricidade apenas para atacar. Impulsos mais fracos ajudam a explorar o ambiente e perceber o que está por perto. Como um peixe consegue produzir eletricidade dentro do próprio corpo?",
+ "pausas": [
+  [
+   2.95,
+   3.11
+  ],
+  [
+   3.939,
+   4.543
+  ],
+  [
+   6.261,
+   6.542
+  ],
+  [
+   8.068,
+   8.19
+  ],
+  [
+   8.358,
+   8.523
+  ],
+  [
+   9.404,
+   9.971
+  ],
+  [
+   11.943,
+   12.305
+  ],
+  [
+   15.712,
+   16.299
+  ],
+  [
+   20.283,
+   20.838
+  ],
+  [
+   24.565,
+   24.702
+  ],
+  [
+   26.16,
+   26.678
+  ],
+  [
+   28.011,
+   28.143
+  ],
+  [
+   29.395,
+   29.824
+  ],
+  [
+   31.207,
+   31.601
+  ],
+  [
+   33.474,
+   33.667
+  ],
+  [
+   34.687,
+   35.133
+  ],
+  [
+   35.504,
+   35.794
+  ],
+  [
+   38.536,
+   38.682
+  ],
+  [
+   39.777,
+   40.256
+  ],
+  [
+   44.47,
+   44.977
+  ],
+  [
+   46.036,
+   46.17
+  ],
+  [
+   47.156,
+   47.443
+  ],
+  [
+   50.235,
+   50.785
+  ],
+  [
+   52.423,
+   52.574
+  ],
+  [
+   53.394,
+   53.849
+  ],
+  [
+   58.239,
+   58.827
+  ],
+  [
+   61.682,
+   61.834
+  ],
+  [
+   62.656,
+   62.851
+  ]
+ ],
+ "frases": [
+  {
+   "texto": "Como um peixe consegue produzir eletricidade dentro do próprio corpo?",
+   "ini": 0.0,
+   "fim": 3.8,
+   "palavras": 10
+  },
+  {
+   "texto": "A enguia elétrica parece comum, mas esconde um sistema elétrico impressionante.",
+   "ini": 4.543,
+   "fim": 9.28,
+   "palavras": 11
+  },
+  {
+   "texto": "Na espécie Electrophorus voltai, pesquisadores registraram até 860 volts.",
+   "ini": 9.971,
+   "fim": 15.54,
+   "palavras": 9
+  },
+  {
+   "texto": "O segredo está em três órgãos elétricos que percorrem boa parte do corpo.",
+   "ini": 16.299,
+   "fim": 20.2,
+   "palavras": 13
+  },
+  {
+   "texto": "Dentro deles, existem milhares de células musculares modificadas, chamadas eletrócitos.",
+   "ini": 20.838,
+   "fim": 25.98,
+   "palavras": 10
+  },
+  {
+   "texto": "Cada célula produz uma pequena diferença elétrica.",
+   "ini": 26.678,
+   "fim": 29.32,
+   "palavras": 7
+  },
+  {
+   "texto": "Sozinha, ela é fraca, mas as células ficam organizadas como pilhas em sequência.",
+   "ini": 29.88,
+   "fim": 34.62,
+   "palavras": 13
+  },
+  {
+   "texto": "Então, sinais do sistema nervoso ativam muitas delas quase ao mesmo tempo.",
+   "ini": 35.133,
+   "fim": 39.72,
+   "palavras": 12
+  },
+  {
+   "texto": "A soma dessas tensões gera uma descarga e cria um campo elétrico na água.",
+   "ini": 40.256,
+   "fim": 44.4,
+   "palavras": 14
+  },
+  {
+   "texto": "Se outro animal estiver perto o suficiente, a descarga pode interferir nos seus músculos e nervos.",
+   "ini": 44.977,
+   "fim": 50.18,
+   "palavras": 16
+  },
+  {
+   "texto": "Mas a enguia não usa eletricidade apenas para atacar.",
+   "ini": 50.785,
+   "fim": 53.38,
+   "palavras": 9
+  },
+  {
+   "texto": "Impulsos mais fracos ajudam a explorar o ambiente e perceber o que está por perto.",
+   "ini": 53.849,
+   "fim": 58.16,
+   "palavras": 15
+  },
+  {
+   "texto": "Como um peixe consegue produzir eletricidade dentro do próprio corpo?",
+   "ini": 58.827,
+   "fim": 62.52,
+   "palavras": 10
+  }
+ ],
+ "palavras": [
+  {
+   "p": "Como",
+   "ini": 0.0,
+   "fim": 0.22,
+   "conf": 0.986
+  },
+  {
+   "p": "um",
+   "ini": 0.22,
+   "fim": 0.4,
+   "conf": 1.0
+  },
+  {
+   "p": "peixe",
+   "ini": 0.4,
+   "fim": 0.72,
+   "conf": 1.0
+  },
+  {
+   "p": "consegue",
+   "ini": 0.72,
+   "fim": 1.14,
+   "conf": 1.0
+  },
+  {
+   "p": "produzir",
+   "ini": 1.14,
+   "fim": 1.66,
+   "conf": 1.0
+  },
+  {
+   "p": "eletricidade",
+   "ini": 1.66,
+   "fim": 2.4,
+   "conf": 1.0
+  },
+  {
+   "p": "dentro",
+   "ini": 2.4,
+   "fim": 2.78,
+   "conf": 1.0
+  },
+  {
+   "p": "do",
+   "ini": 2.78,
+   "fim": 2.95,
+   "conf": 1.0
+  },
+  {
+   "p": "próprio",
+   "ini": 3.11,
+   "fim": 3.36,
+   "conf": 1.0
+  },
+  {
+   "p": "corpo?",
+   "ini": 3.36,
+   "fim": 3.8,
+   "conf": 1.0
+  },
+  {
+   "p": "A",
+   "ini": 4.543,
+   "fim": 4.6,
+   "conf": 1.0
+  },
+  {
+   "p": "enguia",
+   "ini": 4.6,
+   "fim": 4.9,
+   "conf": 0.964
+  },
+  {
+   "p": "elétrica",
+   "ini": 4.9,
+   "fim": 5.4,
+   "conf": 0.999
+  },
+  {
+   "p": "parece",
+   "ini": 5.4,
+   "fim": 5.76,
+   "conf": 1.0
+  },
+  {
+   "p": "comum,",
+   "ini": 5.76,
+   "fim": 6.16,
+   "conf": 1.0
+  },
+  {
+   "p": "mas",
+   "ini": 6.542,
+   "fim": 6.66,
+   "conf": 1.0
+  },
+  {
+   "p": "esconde",
+   "ini": 6.66,
+   "fim": 7.06,
+   "conf": 1.0
+  },
+  {
+   "p": "um",
+   "ini": 7.06,
+   "fim": 7.18,
+   "conf": 1.0
+  },
+  {
+   "p": "sistema",
+   "ini": 7.18,
+   "fim": 7.5,
+   "conf": 1.0
+  },
+  {
+   "p": "elétrico",
+   "ini": 7.5,
+   "fim": 8.02,
+   "conf": 1.0
+  },
+  {
+   "p": "impressionante.",
+   "ini": 8.02,
+   "fim": 9.28,
+   "conf": 1.0
+  },
+  {
+   "p": "Na",
+   "ini": 9.971,
+   "fim": 10.06,
+   "conf": 1.0
+  },
+  {
+   "p": "espécie",
+   "ini": 10.06,
+   "fim": 10.52,
+   "conf": 0.999
+  },
+  {
+   "p": "Electrophorus",
+   "ini": 10.52,
+   "fim": 11.38,
+   "conf": 0.917
+  },
+  {
+   "p": "voltai,",
+   "ini": 11.38,
+   "fim": 11.9,
+   "conf": 0.691
+  },
+  {
+   "p": "pesquisadores",
+   "ini": 12.305,
+   "fim": 12.82,
+   "conf": 1.0
+  },
+  {
+   "p": "registraram",
+   "ini": 12.82,
+   "fim": 13.48,
+   "conf": 1.0
+  },
+  {
+   "p": "até",
+   "ini": 13.48,
+   "fim": 13.7,
+   "conf": 1.0
+  },
+  {
+   "p": "860",
+   "ini": 13.7,
+   "fim": 15.18,
+   "conf": 0.999
+  },
+  {
+   "p": "volts.",
+   "ini": 15.18,
+   "fim": 15.54,
+   "conf": 0.991
+  },
+  {
+   "p": "O",
+   "ini": 16.299,
+   "fim": 16.36,
+   "conf": 1.0
+  },
+  {
+   "p": "segredo",
+   "ini": 16.36,
+   "fim": 16.84,
+   "conf": 1.0
+  },
+  {
+   "p": "está",
+   "ini": 16.84,
+   "fim": 17.0,
+   "conf": 1.0
+  },
+  {
+   "p": "em",
+   "ini": 17.0,
+   "fim": 17.2,
+   "conf": 1.0
+  },
+  {
+   "p": "três",
+   "ini": 17.2,
+   "fim": 17.48,
+   "conf": 0.989
+  },
+  {
+   "p": "órgãos",
+   "ini": 17.48,
+   "fim": 17.9,
+   "conf": 1.0
+  },
+  {
+   "p": "elétricos",
+   "ini": 17.9,
+   "fim": 18.44,
+   "conf": 1.0
+  },
+  {
+   "p": "que",
+   "ini": 18.44,
+   "fim": 18.56,
+   "conf": 1.0
+  },
+  {
+   "p": "percorrem",
+   "ini": 18.56,
+   "fim": 19.0,
+   "conf": 1.0
+  },
+  {
+   "p": "boa",
+   "ini": 19.0,
+   "fim": 19.36,
+   "conf": 1.0
+  },
+  {
+   "p": "parte",
+   "ini": 19.36,
+   "fim": 19.74,
+   "conf": 1.0
+  },
+  {
+   "p": "do",
+   "ini": 19.74,
+   "fim": 19.88,
+   "conf": 1.0
+  },
+  {
+   "p": "corpo.",
+   "ini": 19.88,
+   "fim": 20.2,
+   "conf": 1.0
+  },
+  {
+   "p": "Dentro",
+   "ini": 20.838,
+   "fim": 21.12,
+   "conf": 1.0
+  },
+  {
+   "p": "deles,",
+   "ini": 21.12,
+   "fim": 21.46,
+   "conf": 1.0
+  },
+  {
+   "p": "existem",
+   "ini": 21.66,
+   "fim": 21.92,
+   "conf": 1.0
+  },
+  {
+   "p": "milhares",
+   "ini": 21.92,
+   "fim": 22.52,
+   "conf": 1.0
+  },
+  {
+   "p": "de",
+   "ini": 22.52,
+   "fim": 22.66,
+   "conf": 1.0
+  },
+  {
+   "p": "células",
+   "ini": 22.66,
+   "fim": 23.0,
+   "conf": 1.0
+  },
+  {
+   "p": "musculares",
+   "ini": 23.0,
+   "fim": 23.6,
+   "conf": 1.0
+  },
+  {
+   "p": "modificadas,",
+   "ini": 23.6,
+   "fim": 24.5,
+   "conf": 1.0
+  },
+  {
+   "p": "chamadas",
+   "ini": 24.74,
+   "fim": 25.12,
+   "conf": 1.0
+  },
+  {
+   "p": "eletrócitos.",
+   "ini": 25.12,
+   "fim": 25.98,
+   "conf": 0.993
+  },
+  {
+   "p": "Cada",
+   "ini": 26.678,
+   "fim": 26.88,
+   "conf": 0.999
+  },
+  {
+   "p": "célula",
+   "ini": 26.88,
+   "fim": 27.36,
+   "conf": 1.0
+  },
+  {
+   "p": "produz",
+   "ini": 27.36,
+   "fim": 27.66,
+   "conf": 0.999
+  },
+  {
+   "p": "uma",
+   "ini": 27.66,
+   "fim": 27.84,
+   "conf": 1.0
+  },
+  {
+   "p": "pequena",
+   "ini": 27.84,
+   "fim": 28.34,
+   "conf": 1.0
+  },
+  {
+   "p": "diferença",
+   "ini": 28.34,
+   "fim": 28.78,
+   "conf": 1.0
+  },
+  {
+   "p": "elétrica.",
+   "ini": 28.78,
+   "fim": 29.32,
+   "conf": 0.999
+  },
+  {
+   "p": "Sozinha,",
+   "ini": 29.88,
+   "fim": 30.34,
+   "conf": 0.998
+  },
+  {
+   "p": "ela",
+   "ini": 30.48,
+   "fim": 30.64,
+   "conf": 1.0
+  },
+  {
+   "p": "é",
+   "ini": 30.64,
+   "fim": 30.72,
+   "conf": 1.0
+  },
+  {
+   "p": "fraca,",
+   "ini": 30.72,
+   "fim": 31.12,
+   "conf": 1.0
+  },
+  {
+   "p": "mas",
+   "ini": 31.601,
+   "fim": 31.72,
+   "conf": 1.0
+  },
+  {
+   "p": "as",
+   "ini": 31.72,
+   "fim": 31.88,
+   "conf": 1.0
+  },
+  {
+   "p": "células",
+   "ini": 31.88,
+   "fim": 32.2,
+   "conf": 1.0
+  },
+  {
+   "p": "ficam",
+   "ini": 32.2,
+   "fim": 32.58,
+   "conf": 1.0
+  },
+  {
+   "p": "organizadas",
+   "ini": 32.58,
+   "fim": 33.18,
+   "conf": 1.0
+  },
+  {
+   "p": "como",
+   "ini": 33.18,
+   "fim": 33.44,
+   "conf": 1.0
+  },
+  {
+   "p": "pilhas",
+   "ini": 33.44,
+   "fim": 33.94,
+   "conf": 1.0
+  },
+  {
+   "p": "em",
+   "ini": 33.94,
+   "fim": 34.06,
+   "conf": 1.0
+  },
+  {
+   "p": "sequência.",
+   "ini": 34.06,
+   "fim": 34.62,
+   "conf": 1.0
+  },
+  {
+   "p": "Então,",
+   "ini": 35.133,
+   "fim": 35.44,
+   "conf": 1.0
+  },
+  {
+   "p": "sinais",
+   "ini": 35.82,
+   "fim": 36.22,
+   "conf": 1.0
+  },
+  {
+   "p": "do",
+   "ini": 36.22,
+   "fim": 36.34,
+   "conf": 1.0
+  },
+  {
+   "p": "sistema",
+   "ini": 36.34,
+   "fim": 36.66,
+   "conf": 1.0
+  },
+  {
+   "p": "nervoso",
+   "ini": 36.66,
+   "fim": 37.2,
+   "conf": 1.0
+  },
+  {
+   "p": "ativam",
+   "ini": 37.2,
+   "fim": 37.64,
+   "conf": 1.0
+  },
+  {
+   "p": "muitas",
+   "ini": 37.64,
+   "fim": 38.04,
+   "conf": 1.0
+  },
+  {
+   "p": "delas",
+   "ini": 38.04,
+   "fim": 38.5,
+   "conf": 1.0
+  },
+  {
+   "p": "quase",
+   "ini": 38.5,
+   "fim": 38.9,
+   "conf": 1.0
+  },
+  {
+   "p": "ao",
+   "ini": 38.9,
+   "fim": 39.06,
+   "conf": 1.0
+  },
+  {
+   "p": "mesmo",
+   "ini": 39.06,
+   "fim": 39.32,
+   "conf": 1.0
+  },
+  {
+   "p": "tempo.",
+   "ini": 39.32,
+   "fim": 39.72,
+   "conf": 1.0
+  },
+  {
+   "p": "A",
+   "ini": 40.256,
+   "fim": 40.36,
+   "conf": 1.0
+  },
+  {
+   "p": "soma",
+   "ini": 40.36,
+   "fim": 40.74,
+   "conf": 1.0
+  },
+  {
+   "p": "dessas",
+   "ini": 40.74,
+   "fim": 40.94,
+   "conf": 0.999
+  },
+  {
+   "p": "tensões",
+   "ini": 40.94,
+   "fim": 41.54,
+   "conf": 1.0
+  },
+  {
+   "p": "gera",
+   "ini": 41.54,
+   "fim": 41.88,
+   "conf": 1.0
+  },
+  {
+   "p": "uma",
+   "ini": 41.88,
+   "fim": 42.02,
+   "conf": 1.0
+  },
+  {
+   "p": "descarga",
+   "ini": 42.02,
+   "fim": 42.6,
+   "conf": 1.0
+  },
+  {
+   "p": "e",
+   "ini": 42.6,
+   "fim": 42.82,
+   "conf": 1.0
+  },
+  {
+   "p": "cria",
+   "ini": 42.82,
+   "fim": 43.04,
+   "conf": 0.999
+  },
+  {
+   "p": "um",
+   "ini": 43.04,
+   "fim": 43.16,
+   "conf": 1.0
+  },
+  {
+   "p": "campo",
+   "ini": 43.16,
+   "fim": 43.46,
+   "conf": 1.0
+  },
+  {
+   "p": "elétrico",
+   "ini": 43.46,
+   "fim": 43.98,
+   "conf": 1.0
+  },
+  {
+   "p": "na",
+   "ini": 43.98,
+   "fim": 44.12,
+   "conf": 1.0
+  },
+  {
+   "p": "água.",
+   "ini": 44.12,
+   "fim": 44.4,
+   "conf": 1.0
+  },
+  {
+   "p": "Se",
+   "ini": 44.977,
+   "fim": 45.12,
+   "conf": 1.0
+  },
+  {
+   "p": "outro",
+   "ini": 45.12,
+   "fim": 45.36,
+   "conf": 1.0
+  },
+  {
+   "p": "animal",
+   "ini": 45.36,
+   "fim": 45.62,
+   "conf": 1.0
+  },
+  {
+   "p": "estiver",
+   "ini": 45.62,
+   "fim": 45.96,
+   "conf": 1.0
+  },
+  {
+   "p": "perto",
+   "ini": 45.96,
+   "fim": 46.4,
+   "conf": 1.0
+  },
+  {
+   "p": "o",
+   "ini": 46.4,
+   "fim": 46.54,
+   "conf": 1.0
+  },
+  {
+   "p": "suficiente,",
+   "ini": 46.54,
+   "fim": 46.9,
+   "conf": 1.0
+  },
+  {
+   "p": "a",
+   "ini": 47.443,
+   "fim": 47.52,
+   "conf": 1.0
+  },
+  {
+   "p": "descarga",
+   "ini": 47.52,
+   "fim": 47.96,
+   "conf": 1.0
+  },
+  {
+   "p": "pode",
+   "ini": 47.96,
+   "fim": 48.22,
+   "conf": 1.0
+  },
+  {
+   "p": "interferir",
+   "ini": 48.22,
+   "fim": 48.86,
+   "conf": 1.0
+  },
+  {
+   "p": "nos",
+   "ini": 48.86,
+   "fim": 49.0,
+   "conf": 0.999
+  },
+  {
+   "p": "seus",
+   "ini": 49.0,
+   "fim": 49.18,
+   "conf": 1.0
+  },
+  {
+   "p": "músculos",
+   "ini": 49.18,
+   "fim": 49.64,
+   "conf": 1.0
+  },
+  {
+   "p": "e",
+   "ini": 49.64,
+   "fim": 49.8,
+   "conf": 0.998
+  },
+  {
+   "p": "nervos.",
+   "ini": 49.8,
+   "fim": 50.18,
+   "conf": 0.991
+  },
+  {
+   "p": "Mas",
+   "ini": 50.785,
+   "fim": 50.9,
+   "conf": 1.0
+  },
+  {
+   "p": "a",
+   "ini": 50.9,
+   "fim": 51.02,
+   "conf": 1.0
+  },
+  {
+   "p": "enguia",
+   "ini": 51.02,
+   "fim": 51.3,
+   "conf": 0.964
+  },
+  {
+   "p": "não",
+   "ini": 51.3,
+   "fim": 51.48,
+   "conf": 1.0
+  },
+  {
+   "p": "usa",
+   "ini": 51.48,
+   "fim": 51.68,
+   "conf": 1.0
+  },
+  {
+   "p": "eletricidade",
+   "ini": 51.68,
+   "fim": 52.3,
+   "conf": 0.999
+  },
+  {
+   "p": "apenas",
+   "ini": 52.3,
+   "fim": 52.74,
+   "conf": 1.0
+  },
+  {
+   "p": "para",
+   "ini": 52.74,
+   "fim": 52.94,
+   "conf": 0.984
+  },
+  {
+   "p": "atacar.",
+   "ini": 52.94,
+   "fim": 53.38,
+   "conf": 1.0
+  },
+  {
+   "p": "Impulsos",
+   "ini": 53.849,
+   "fim": 54.32,
+   "conf": 1.0
+  },
+  {
+   "p": "mais",
+   "ini": 54.32,
+   "fim": 54.62,
+   "conf": 1.0
+  },
+  {
+   "p": "fracos",
+   "ini": 54.62,
+   "fim": 55.12,
+   "conf": 1.0
+  },
+  {
+   "p": "ajudam",
+   "ini": 55.12,
+   "fim": 55.56,
+   "conf": 1.0
+  },
+  {
+   "p": "a",
+   "ini": 55.56,
+   "fim": 55.66,
+   "conf": 1.0
+  },
+  {
+   "p": "explorar",
+   "ini": 55.66,
+   "fim": 56.1,
+   "conf": 1.0
+  },
+  {
+   "p": "o",
+   "ini": 56.1,
+   "fim": 56.2,
+   "conf": 1.0
+  },
+  {
+   "p": "ambiente",
+   "ini": 56.2,
+   "fim": 56.58,
+   "conf": 1.0
+  },
+  {
+   "p": "e",
+   "ini": 56.58,
+   "fim": 56.86,
+   "conf": 1.0
+  },
+  {
+   "p": "perceber",
+   "ini": 56.86,
+   "fim": 57.26,
+   "conf": 1.0
+  },
+  {
+   "p": "o",
+   "ini": 57.26,
+   "fim": 57.42,
+   "conf": 1.0
+  },
+  {
+   "p": "que",
+   "ini": 57.42,
+   "fim": 57.5,
+   "conf": 1.0
+  },
+  {
+   "p": "está",
+   "ini": 57.5,
+   "fim": 57.64,
+   "conf": 1.0
+  },
+  {
+   "p": "por",
+   "ini": 57.64,
+   "fim": 57.86,
+   "conf": 1.0
+  },
+  {
+   "p": "perto.",
+   "ini": 57.86,
+   "fim": 58.16,
+   "conf": 1.0
+  },
+  {
+   "p": "Como",
+   "ini": 58.827,
+   "fim": 58.98,
+   "conf": 0.97
+  },
+  {
+   "p": "um",
+   "ini": 58.98,
+   "fim": 59.18,
+   "conf": 1.0
+  },
+  {
+   "p": "peixe",
+   "ini": 59.18,
+   "fim": 59.46,
+   "conf": 1.0
+  },
+  {
+   "p": "consegue",
+   "ini": 59.46,
+   "fim": 59.86,
+   "conf": 0.999
+  },
+  {
+   "p": "produzir",
+   "ini": 59.86,
+   "fim": 60.4,
+   "conf": 1.0
+  },
+  {
+   "p": "eletricidade",
+   "ini": 60.4,
+   "fim": 61.16,
+   "conf": 0.999
+  },
+  {
+   "p": "dentro",
+   "ini": 61.16,
+   "fim": 61.48,
+   "conf": 1.0
+  },
+  {
+   "p": "do",
+   "ini": 61.48,
+   "fim": 61.682,
+   "conf": 1.0
+  },
+  {
+   "p": "próprio",
+   "ini": 61.834,
+   "fim": 62.06,
+   "conf": 1.0
+  },
+  {
+   "p": "corpo?",
+   "ini": 62.06,
+   "fim": 62.52,
+   "conf": 1.0
+  }
+ ],
+ "nota": "'Voltae' corrigido para 'voltai' (Electrophorus voltai). Tempos do Whisper ajustados pelas pausas reais do áudio."
+}

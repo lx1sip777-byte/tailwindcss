@@ -36,19 +36,22 @@ export function criarEstudio({ fundo = 0x000000, fov = 35 } = {}) {
 
 // Registra o vídeo: expõe window.DURATION e window.seek(t).
 // `preparar` (opcional) roda uma vez antes do primeiro quadro (carregar texturas, fontes etc).
-export function registrar({ duracao, desenhar, renderer, cena, camera, preparar }) {
+// `renderizar` (opcional) substitui o renderer.render padrão (ex.: plano dividido acima/abaixo d'água).
+// `cenas` (opcional) é a lista de cenas da folha de prévia: [{ id, ini, fim, fala, imagem, etiquetas, som, still }].
+export function registrar({ duracao, desenhar, renderer, cena, camera, preparar, renderizar, cenas }) {
   let pronto = (async () => {
     if (preparar) await preparar();
     if (document.fonts) await document.fonts.ready;
   })();
 
   window.DURATION = duracao;
+  window.CENAS = cenas || [];
   window.FPS = FPS;
   window.seek = async (t) => {
     await pronto;
     const tt = Math.min(Math.max(t, 0), duracao);
     desenhar(tt);
-    renderer.render(cena, camera);
+    if (renderizar) renderizar(tt); else renderer.render(cena, camera);
     window.TEMPO_ATUAL = tt;
     return tt;
   };

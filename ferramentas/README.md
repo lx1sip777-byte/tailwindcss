@@ -10,6 +10,18 @@ Instalação (uma vez por máquina): `cd ferramentas && npm install`, depois `no
 | `node ferramentas/render.mjs projetos/<nome> --audio narracao.wav` | Idem, com AAC 48 kHz a -14 LUFS / -1 dBTP (sem cortar o áudio). Um `narracao.wav` na pasta do projeto é usado sozinho. |
 | `node ferramentas/servidor.mjs projetos/<nome>` | Prévia no navegador: `http://localhost:5173/?play` (loop) ou `?t=2.5` (quadro fixo). |
 
+### Narração → cenas → folha de prévia
+
+| Comando | O que faz |
+|---|---|
+| `python3 -m venv ferramentas/.venv && ferramentas/.venv/bin/pip install faster-whisper==1.1.1 requests` | Prepara a transcrição (uma vez). Os modelos vêm do huggingface.co (precisa estar liberado na rede do ambiente). |
+| `ferramentas/.venv/bin/python ferramentas/transcrever.py projetos/<nome>/narracao.mp3 projetos/<nome>/transcricao.json` | Tempo de cada palavra (Whisper large-v3-turbo, CPU), ajustado pelas pausas reais do áudio. Só lê o áudio. |
+| `node ferramentas/folha.mjs projetos/<nome>` | Folha de prévia: um still por cena com tempo, fala, imagem, etiquetas e som (`saida/previa/folha.png`). |
+
+Na página, `carregarNarracao()` (`motor/narracao.js`) dá `w('palavra', n)` (início da n-ésima ocorrência) e
+`legenda(t)` (1 a 3 palavras, palavra falada acesa). `registrar({ cenas })` expõe a lista de cenas para a folha;
+`registrar({ renderizar })` permite render próprio (ex.: plano dividido na linha d'água).
+
 Saídas vão para `projetos/<nome>/saida/` e nunca sobrescrevem: `nome.mp4`, `nome_v2.mp4`, `nome_v3.mp4`...
 
 ## Estilo do estúdio (`motor/estilo.js`)

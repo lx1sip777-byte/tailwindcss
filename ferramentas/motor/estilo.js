@@ -17,6 +17,7 @@ export const PALETA = {
   // hachura dos cortes
   hachuraFundo: '#e2d8c2', hachuraLinha: '#a39276', // estrutura (parede, porta, batente)
   metalFundo: '#e6cf98', metalLinha: '#9c7c3a', // metal cortado
+  tecido: '#c98a7e', tecidoLinha: '#8a4d47', // órgão/tecido vivo cortado
   // destaque: só a peça citada
   ambar: '#ffb547',
   // texto
@@ -90,16 +91,28 @@ export const HACHURA = {
   estrutura: { fundo: PALETA.hachuraFundo, linha: PALETA.hachuraLinha, angulo: 45, passo: 11, sombrear: true },
   metal: { fundo: PALETA.metalFundo, linha: PALETA.metalLinha, angulo: -45, passo: 6 },
   metal2: { fundo: PALETA.metalFundo, linha: PALETA.metalLinha, angulo: 45, passo: 5 },
+  // tecido vivo cortado (órgãos): riscas verticais, como células empilhadas
+  tecido: { fundo: PALETA.tecido, linha: PALETA.tecidoLinha, angulo: 0, passo: 5, espessura: 1.3 },
 };
+
+// variação de hachura (ex.: a peça citada em âmbar): troca o material do miolo de um mesh já cortado
+export function hachuraDe(corte, opcoes) { return materialHachura(corte.planos, { ...opcoes, interseccao: true }); }
 
 // Cria um corte em caixa (o volume removido). Comece fechado: corte.abrir(0..1).
 // Peças paradas (carcaça, parede) são cortadas e mostram hachura; peças que se movem ficam inteiras.
-export function criarCorte({ min, max }) {
+// `origem`: ponto de onde o corte cresce (padrão: o centro da caixa). Ex.: no lado da câmera, o corte "fatia" o objeto.
+export function criarCorte({ min, max, origem }) {
   const planos = [new THREE.Plane(), new THREE.Plane(), new THREE.Plane(), new THREE.Plane(), new THREE.Plane(), new THREE.Plane()];
-  const centro = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
+  min = min.clone(); max = max.clone();
+  let centro = origem ? origem.clone() : new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
   const corte = {
     planos,
-    // f = 0 fechado, 1 aberto. Abre a partir do centro, nos três eixos.
+    // muda a caixa do corte (ex.: abrir só a cauda numa cena); depois chame abrir(f)
+    definir(nmin, nmax, norigem) {
+      min.copy(nmin); max.copy(nmax);
+      centro = norigem ? norigem.clone() : new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
+    },
+    // f = 0 fechado, 1 aberto. Cresce a partir da origem, nos três eixos.
     abrir(f) {
       const mi = new THREE.Vector3().lerpVectors(centro, min, f);
       const ma = new THREE.Vector3().lerpVectors(centro, max, f);
@@ -118,6 +131,7 @@ export function criarCorte({ min, max }) {
       const miolo = new THREE.Mesh(mesh.geometry, materialHachura(planos, { ...hachura, interseccao: true }));
       miolo.castShadow = false; miolo.receiveShadow = false;
       mesh.add(miolo);
+      mesh.userData.miolo = miolo;
       return mesh;
     },
   };
@@ -194,9 +208,9 @@ export function criarTexto() {
       const direita = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).normalize();
       const a = naTela(ponto, camera), b = naTela(ponto.clone().add(direita), camera);
       const pxPorMetro = Math.hypot(b.x - a.x, b.y - a.y);
-      const valores = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50];
+      const valores = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50];
       let v = valores.find((m) => m * pxPorMetro >= 90) ?? 50;
-      const texto = v < 0.01 ? `${Math.round(v * 1000)} mm` : v < 1 ? `${Math.round(v * 100)} cm` : `${v} m`;
+      const texto = v < 0.001 ? `${(v * 1000).toFixed(1).replace('.', ',')} mm` : v < 0.01 ? `${Math.round(v * 1000)} mm` : v < 1 ? `${Math.round(v * 100)} cm` : `${v} m`;
       escalaEl.querySelector('.barra').style.width = `${(v * pxPorMetro).toFixed(1)}px`;
       escalaEl.querySelector('.rotulo').textContent = texto;
     },
