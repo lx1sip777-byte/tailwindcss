@@ -1,5 +1,10 @@
 # Meu estúdio
 
+## A pasta do estúdio
+- Quando eu pedir "a pasta" (do estúdio), abra `estudio/LEIA-ME.md` e continue de onde paramos:
+  lá estão meus pedidos, as referências, as entregas e o estado atual.
+- A cada entrega nova, atualize a pasta: pedido em `estudio/pedidos.md`, arquivo final em `estudio/entregues/`.
+
 ## Como trabalhar comigo
 - Nunca edite o áudio da narração (sem cortes, pausas ou aceleração).
   A animação segue a fala, à risca.

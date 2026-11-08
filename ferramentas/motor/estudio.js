@@ -12,8 +12,9 @@ export const ALTURA = 1920;
 export const FPS = 30;
 
 export function criarEstudio({ fundo = 0x000000, fov = 35 } = {}) {
+  const parametros = new URLSearchParams(location.search);
   const renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    antialias: parametros.get('aa') !== '0', // ?aa=0 só para diagnóstico
     preserveDrawingBuffer: true, // o quadro continua no canvas até a captura
     powerPreference: 'high-performance',
   });
@@ -26,6 +27,7 @@ export function criarEstudio({ fundo = 0x000000, fov = 35 } = {}) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.id = 'quadro';
   document.body.appendChild(renderer.domElement);
+  window.RENDERER = renderer; // para diagnóstico (ferramentas/perfil)
 
   const cena = new THREE.Scene();
   cena.background = new THREE.Color(fundo);

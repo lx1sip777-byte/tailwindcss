@@ -14,7 +14,7 @@ function carregarPlaywright() {
   return require(path.join(global, 'playwright'));
 }
 
-export async function abrirProjeto(pastaProjeto) {
+export async function abrirProjeto(pastaProjeto, consulta = '') {
   if (!fs.existsSync(path.join(pastaProjeto, 'index.html'))) {
     throw new Error(`não achei ${path.join(pastaProjeto, 'index.html')}`);
   }
@@ -28,7 +28,7 @@ export async function abrirProjeto(pastaProjeto) {
   pagina.on('pageerror', (e) => erros.push(e.message));
   pagina.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
 
-  await pagina.goto(servidor.url, { waitUntil: 'load' });
+  await pagina.goto(servidor.url + consulta, { waitUntil: 'load' });
   try {
     await pagina.waitForFunction(() => typeof window.seek === 'function' && window.ESTUDIO_PRONTO, null, { timeout: 30000 });
     await pagina.evaluate(() => window.ESTUDIO_PRONTO);
