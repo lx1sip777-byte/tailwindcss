@@ -1,5 +1,5 @@
 // node ferramentas/checar.mjs projetos/<nome> [de] [até] [passo]
-// Confere, quadro a quadro,, se etiquetas saem da margem ou encavalam entre si, com a legenda ou com a barra de escala
+// Confere, quadro a quadro, se etiquetas saem da margem ou encavalam entre si, com a legenda ou com a barra de escala
 import { abrirProjeto } from './navegador.mjs';
 const [, , projeto, de = '0', ate = '9999', passo = '3'] = process.argv;
 const p = await abrirProjeto(projeto);
