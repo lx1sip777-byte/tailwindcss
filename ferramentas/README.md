@@ -16,6 +16,7 @@ Instalação (uma vez por máquina): `cd ferramentas && npm install`, depois `no
 |---|---|
 | `python3 -m venv ferramentas/.venv && ferramentas/.venv/bin/pip install faster-whisper==1.1.1 requests` | Prepara a transcrição (uma vez). Os modelos vêm do huggingface.co (precisa estar liberado na rede do ambiente). |
 | `ferramentas/.venv/bin/python ferramentas/transcrever.py projetos/<nome>/narracao.mp3 projetos/<nome>/transcricao.json` | Tempo de cada palavra (Whisper large-v3-turbo, CPU), ajustado pelas pausas reais do áudio. Só lê o áudio. |
+| `node ferramentas/checar.mjs projetos/<nome> [de] [até] [passo]` | Antes do render: em cada quadro, etiqueta fora da margem ou encavalada (entre si, com a legenda ou com a barra de escala). |
 | `node ferramentas/folha.mjs projetos/<nome>` | Folha de prévia: um still por cena com tempo, fala, imagem, etiquetas e som (`saida/previa/folha.png`). |
 
 Na página, `carregarNarracao()` (`motor/narracao.js`) dá `w('palavra', n)` (início da n-ésima ocorrência) e

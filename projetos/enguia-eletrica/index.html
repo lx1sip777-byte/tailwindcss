@@ -668,7 +668,7 @@
         celulas.atualizar((r, c) => t >= w('diferença') && r === linhaAlvo && c === celAlvo);
         etiquetas = [
           { ponto: V(cx + MICRO.esp / 2, cy + MICRO.alt * 0.2, MICRO.prof * 0.3), texto: 'LADO +', dx: 150, dy: -250 },
-          { ponto: V(cx - MICRO.esp / 2, cy - MICRO.alt * 0.2, MICRO.prof * 0.3), texto: 'LADO −', dx: -150, dy: 230 },
+          { ponto: V(cx - MICRO.esp / 2, cy - MICRO.alt * 0.2, MICRO.prof * 0.3), texto: 'LADO −', dx: 190, dy: -40 },
         ];
         if (t >= w('diferença')) etiquetas.push({ ponto: V(cx, cy + MICRO.alt * 0.3, 0), texto: '≈ 0,15 V', dx: -170, dy: 90 });
       } else {
