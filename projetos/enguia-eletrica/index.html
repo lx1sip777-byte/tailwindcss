@@ -677,7 +677,7 @@
         celulas.atualizar((r, c) => r === linhaAlvo && (c === celAlvo || (t >= tP && Math.abs(c - celAlvo) <= n / 2)));
         pilhas.visible = t >= tP;
         if (t < w('mas', 1)) etiquetas = [{ ponto: V(cx, cy + MICRO.alt * 0.3, MICRO.prof / 2), texto: '1 CÉLULA · 0,15 V', dx: 70, dy: -330 }];
-        if (t >= w('sequência')) etiquetas = [{ ponto: V(MICRO.x - 0.0022, cy + 0.0005, MICRO.prof), texto: 'EM SÉRIE', dx: -20, dy: -330 }];
+        if (t >= w('sequência')) etiquetas = [{ ponto: V(MICRO.x - 0.0011, cy + 0.0005, MICRO.prof), texto: 'EM SÉRIE', dx: 40, dy: -330 }];
       }
       refEscala = V(MICRO.x, MICRO.y, 0);
     } else if (id === 'C9') {
@@ -713,7 +713,7 @@
       const PER = (F[12] - w('impulsos')) / 3, nPulso = Math.floor((t - w('impulsos')) / PER), pulso = ((t - w('impulsos')) % PER) * (0.9 / PER);
       if (t >= w('impulsos') && nPulso < 3) { campoFraco.grupo.visible = true; campoFraco.crescer(suave(0, 0.5, pulso)); campoFraco.mat.opacity = 0.85 * (1 - suave(0.55, 0.9, pulso)); }
       if (t >= w('impulsos')) etiquetas = [
-        { ponto: naFace(0.78, -0.3), texto: 'ÓRGÃO DE SACHS', dx: -200, dy: -330 },
+        { ponto: naFace(0.9, -0.3), texto: 'ÓRGÃO DE SACHS', dx: -180, dy: -300 },
         { ponto: V(-0.66, Y + 0.12, 0.03), texto: 'PULSOS FRACOS', dx: -120, dy: -420 },
       ];
       if (t >= w('perceber')) etiquetas.push({ ponto: camarao.position.clone(), texto: 'CAMARÃO', dx: 90, dy: 210 });

@@ -31,7 +31,7 @@ function duracaoAudio(arquivo) {
 }
 
 // -14 LUFS / -1 dBTP: ganho até o alvo + limitador de pico real (sobreamostrado 4×), ajustando o ganho
-// em passadas até acertar o integrado. Só volume: nada é cortado, pausado ou acelerado.
+// em passadas até acertar o integrado, já em estéreo (limita só o necessário). Só volume: nada é cortado, pausado ou acelerado.
 function medirR128(arquivo) {
   const txt = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', arquivo, '-af', 'ebur128=peak=true', '-f', 'null', '-']).stderr.toString();
   const res = txt.slice(txt.lastIndexOf('Summary'));
@@ -40,14 +40,14 @@ function medirR128(arquivo) {
 function normalizar(entrada, pasta) {
   const lim = path.join(pasta, 'normalizado.wav'), teste = path.join(pasta, 'teste.m4a');
   let ganho = -14 - medirR128(entrada).I, m;
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     const a = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', entrada, '-af',
-      `volume=${ganho.toFixed(2)}dB,aresample=192000,alimiter=limit=0.82:attack=2:release=60:level=false,aresample=48000`, '-c:a', 'pcm_s24le', lim]);
+      `aformat=channel_layouts=stereo,volume=${ganho.toFixed(2)}dB,aresample=192000,alimiter=limit=0.82:attack=2:release=60:level=false,aresample=48000`, '-c:a', 'pcm_s24le', lim]);
     if (a.status !== 0) throw new Error('normalizar: ' + a.stderr.toString());
-    spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', lim, '-c:a', 'aac', '-b:a', '192k', teste]);
+    spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', lim, '-ac', '2', '-c:a', 'aac', '-b:a', '192k', teste]); // mede no formato entregue (estéreo)
     m = medirR128(teste);
     console.log(`  volume: ganho ${ganho.toFixed(2)} dB → ${m.I} LUFS, pico ${m.TP} dBTP`);
-    if (Math.abs(m.I + 14) <= 0.1 && m.TP <= -1) break;
+    if (Math.abs(m.I + 14) <= 0.05 && m.TP <= -1) break;
     ganho += -14 - m.I;
   }
   return lim;
