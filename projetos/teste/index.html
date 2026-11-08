@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>teste — cubo girando</title>
+  <style>
+    html, body { margin: 0; background: #0a1430; overflow: hidden; }
+    #quadro { display: block; width: 1080px; height: 1920px; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "/three/build/three.module.js", "three/addons/": "/three/examples/jsm/" } }
+  </script>
+</head>
+<body>
+<script type="module">
+  import { criarEstudio, registrar } from '/motor/estudio.js';
+  import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+  const AZUL_NOITE = 0x0a1430;
+  const { THREE, renderer, cena, camera } = criarEstudio({ fundo: AZUL_NOITE, fov: 30 });
+  cena.fog = new THREE.Fog(AZUL_NOITE, 14, 30);
+
+  camera.position.set(0, 3.2, 18);
+  camera.lookAt(0, 0, 0);
+
+  // Luz: céu frio + chave quente lateral + contorno azul por trás.
+  cena.add(new THREE.HemisphereLight(0x9fb8ff, 0x0a1430, 0.6));
+  const chave = new THREE.DirectionalLight(0xfff1dc, 1.8);
+  chave.position.set(4, 7, 5);
+  chave.castShadow = true;
+  chave.shadow.mapSize.set(2048, 2048);
+  chave.shadow.camera.left = chave.shadow.camera.bottom = -8;
+  chave.shadow.camera.right = chave.shadow.camera.top = 8;
+  chave.shadow.camera.far = 30;
+  chave.shadow.bias = -0.0005;
+  cena.add(chave);
+  const contorno = new THREE.DirectionalLight(0x6f9bff, 1.6);
+  contorno.position.set(-5, 3, -6);
+  cena.add(contorno);
+  const preenchimento = new THREE.DirectionalLight(0xc8d6ff, 0.7);
+  preenchimento.position.set(-3, 1, 8);
+  cena.add(preenchimento);
+
+  // Chão no mesmo tom do fundo, só para receber a sombra.
+  const chao = new THREE.Mesh(
+    new THREE.CircleGeometry(12, 64),
+    new THREE.MeshStandardMaterial({ color: 0x0d1a3d, roughness: 0.95 })
+  );
+  chao.rotation.x = -Math.PI / 2;
+  chao.position.y = -1.6;
+  chao.receiveShadow = true;
+  cena.add(chao);
+
+  const cubo = new THREE.Mesh(
+    new RoundedBoxGeometry(2, 2, 2, 6, 0.14),
+    new THREE.MeshStandardMaterial({ color: 0xd9e0ee, roughness: 0.4, metalness: 0.05 })
+  );
+  cubo.castShadow = true;
+  cena.add(cubo);
+
+  const DURACAO = 5;
+  registrar({
+    duracao: DURACAO, renderer, cena, camera,
+    desenhar(t) {
+      const f = t / DURACAO;               // 0 → 1 ao longo do vídeo
+      const volta = f * Math.PI * 2;       // uma volta inteira: o fim emenda no começo
+      cubo.rotation.set(0.45 + 0.15 * Math.sin(volta), volta, 0.25 * Math.sin(volta));
+      cubo.position.y = 0.15 * Math.sin(volta * 2);
+    },
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "estudio-ferramentas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verificar": "node verificar.mjs",
+    "render": "node render.mjs",
+    "still": "node still.mjs",
+    "previa": "node servidor.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  }
+}
