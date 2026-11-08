@@ -417,6 +417,8 @@
       const tom = new THREE.Color('#d39686').multiplyScalar(0.88 + 0.22 * hash(r, c));
       normais.setColorAt(pos.length - 1, tom);
     }
+    // começam vazias (escala 0): sem isto o three calcula uma esfera envolvente vazia e para de desenhá-las
+    normais.frustumCulled = false; acesas.frustumCulled = false;
     micro.add(normais, acesas);
     // septos (tecido conjuntivo) entre as fileiras e o fundo do órgão
     const larg = MICRO.porLinha * MICRO.passo + 0.001;
