@@ -1,13 +1,16 @@
 // Renderiza um projeto em MP4.
 //   node ferramentas/render.mjs projetos/<nome> [--audio narracao.wav] [--crf 18] [--nome saida]
 // Vídeo: 1080x1920, 30 fps, H.264 High, yuv420p, BT.709 (faixa limitada), +faststart.
-// Áudio (opcional): AAC 48 kHz, normalizado em duas passadas para -14 LUFS / -1 dBTP.
+// Áudio (opcional): AAC 48 kHz estéreo, -14 LUFS / -1 dBTP (ganho + limitador de pico real, conferido no fim).
+// Efeitos: se a página expõe window.SONS ([{ t, tipo, vol }]), gera os efeitos (sons.mjs) e mistura por
+// baixo da narração; a narração entra inteira, sem cortes, pausas ou mudança de velocidade.
 // O áudio nunca é cortado nem acelerado; se a duração não bater com window.DURATION, avisa.
 // Saída em projetos/<nome>/saida/; nunca sobrescreve (gera _v2, _v3...).
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { abrirProjeto, nomeLivre } from './navegador.mjs';
+import { gerarTrilhaSons } from './sons.mjs';
 
 const args = process.argv.slice(2);
 const opcao = (n, padrao) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : padrao; };
@@ -27,12 +30,29 @@ function duracaoAudio(arquivo) {
   return Number(r.stdout.toString().trim());
 }
 
-function medirLoudness(arquivo) {
-  const r = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', arquivo,
-    '-af', 'loudnorm=I=-14:TP=-1:LRA=11:print_format=json', '-f', 'null', '-']);
-  const txt = r.stderr.toString();
-  return JSON.parse(txt.slice(txt.lastIndexOf('{'), txt.lastIndexOf('}') + 1));
+// -14 LUFS / -1 dBTP: ganho até o alvo + limitador de pico real (sobreamostrado 4×), ajustando o ganho
+// em passadas até acertar o integrado. Só volume: nada é cortado, pausado ou acelerado.
+function medirR128(arquivo) {
+  const txt = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', arquivo, '-af', 'ebur128=peak=true', '-f', 'null', '-']).stderr.toString();
+  const res = txt.slice(txt.lastIndexOf('Summary'));
+  return { I: Number(res.match(/I:\s+(-?[\d.]+) LUFS/)[1]), TP: Number(res.match(/Peak:\s+(-?[\d.]+) dBFS/)[1]) };
 }
+function normalizar(entrada, pasta) {
+  const lim = path.join(pasta, 'normalizado.wav'), teste = path.join(pasta, 'teste.m4a');
+  let ganho = -14 - medirR128(entrada).I, m;
+  for (let i = 0; i < 6; i++) {
+    const a = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', entrada, '-af',
+      `volume=${ganho.toFixed(2)}dB,aresample=192000,alimiter=limit=0.82:attack=2:release=60:level=false,aresample=48000`, '-c:a', 'pcm_s24le', lim]);
+    if (a.status !== 0) throw new Error('normalizar: ' + a.stderr.toString());
+    spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', lim, '-c:a', 'aac', '-b:a', '192k', teste]);
+    m = medirR128(teste);
+    console.log(`  volume: ganho ${ganho.toFixed(2)} dB → ${m.I} LUFS, pico ${m.TP} dBTP`);
+    if (Math.abs(m.I + 14) <= 0.1 && m.TP <= -1) break;
+    ganho += -14 - m.I;
+  }
+  return lim;
+}
+
 
 const t0 = Date.now();
 const p = await abrirProjeto(projeto);
@@ -47,12 +67,23 @@ if (audio) {
   if (Math.abs(da - p.duracao) > 1 / p.fps) {
     console.warn(`AVISO: áudio tem ${da.toFixed(3)}s e o vídeo ${p.duracao}s. Ajuste window.DURATION (o áudio não é cortado).`);
   }
-  const m = medirLoudness(audio);
-  console.log(`áudio: ${audio} (${m.input_i} LUFS, pico ${m.input_tp} dBTP) → -14 LUFS / -1 dBTP`);
+  const sons = await p.pagina.evaluate(() => window.SONS || []);
+  if (sons.length) {
+    const tmp = path.join(projeto, 'saida', '.tmp'); fs.mkdirSync(tmp, { recursive: true });
+    const trilha = gerarTrilhaSons(sons, da, path.join(tmp, 'sons.wav'));
+    const mix = path.join(tmp, 'mix.wav');
+    const rm = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', audio, '-i', trilha, '-filter_complex',
+      '[0:a]aresample=48000,aformat=channel_layouts=mono[n];[n][1:a]amix=inputs=2:normalize=0:duration=first[m]', '-map', '[m]', '-c:a', 'pcm_s24le', mix]);
+    if (rm.status !== 0) throw new Error('mistura: ' + rm.stderr.toString());
+    console.log(`efeitos: ${sons.length} eventos misturados por baixo da narração`);
+    audio = mix;
+  }
+  const tmpA = path.join(projeto, 'saida', '.tmp'); fs.mkdirSync(tmpA, { recursive: true });
+  const m0 = medirR128(audio);
+  console.log(`áudio: ${audio} (${m0.I} LUFS, pico ${m0.TP} dBTP) → -14 LUFS / -1 dBTP`);
+  audio = normalizar(audio, tmpA);
   ffArgs.push('-i', audio);
-  filtroAudio = ['-af', `loudnorm=I=-14:TP=-1:LRA=11:measured_I=${m.input_i}:measured_TP=${m.input_tp}` +
-    `:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true`,
-    '-ar', '48000', '-c:a', 'aac', '-b:a', '192k'];
+  filtroAudio = ['-ar', '48000', '-ac', '2', '-c:a', 'aac', '-b:a', '192k'];
 }
 
 const saida = nomeLivre(path.join(projeto, 'saida'), nome, '.mp4');
@@ -80,4 +111,8 @@ ff.stdin.end();
 await fim;
 await p.fechar();
 console.log(`\npronto: ${saida} (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
+if (audio) {
+  const fim = medirR128(saida);
+  console.log(`volume final: ${fim.I} LUFS integrado, pico real ${fim.TP} dBTP`);
+}
 if (p.erros.length) console.warn('erros na página:\n' + p.erros.join('\n'));

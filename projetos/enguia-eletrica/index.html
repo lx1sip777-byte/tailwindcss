@@ -523,8 +523,8 @@
 
   // ---------- montagem por instante ----------
   function atualizarEnguia(t) {
-    corpo.atualizar(); for (const o of Object.values(ORG)) o.atualizar(); medula.atualizar(); cerebro.atualizar();
-    nadadeira.atualizar(t); atualizarNervos();
+    corpo.atualizar(); nadadeira.atualizar(t);
+    if (medulaMesh.visible) { for (const o of Object.values(ORG)) o.atualizar(); medula.atualizar(); cerebro.atualizar(); atualizarNervos(); }
     for (const { m, lado } of olhos) { const f = referencial(0.03), b = corpoPerfil(0.03); m.position.copy(f.C).addScaledVector(f.N, 0.38 * b.ry).addScaledVector(f.B, 0.78 * b.rz * lado); }
     for (const { m, lado } of peitorais) {
       const f = referencial(0.085), b = corpoPerfil(0.085);
@@ -632,8 +632,8 @@
         for (const kk of ['principal', 'hunter', 'sachs']) acender(kk, acesos);
         if (t >= w('três') && t < w('percorrem')) etiquetas = [
           { ponto: naFace(0.3, -0.3), texto: 'ÓRGÃO PRINCIPAL', dx: -300, dy: -230 },
-          { ponto: naFace(0.42, -0.86), texto: 'ÓRGÃO DE HUNTER', dx: -330, dy: -40 },
-          { ponto: naFace(0.86, -0.3), texto: 'ÓRGÃO DE SACHS', dx: 60, dy: -170 },
+          ...(t >= w('órgãos') ? [{ ponto: naFace(0.42, -0.86), texto: 'ÓRGÃO DE HUNTER', dx: -330, dy: -40 }] : []),
+          ...(t >= w('elétricos') ? [{ ponto: naFace(0.86, -0.3), texto: 'ÓRGÃO DE SACHS', dx: 60, dy: -170 }] : []),
         ];
         if (t >= w('percorrem')) etiquetas = [{ ponto: naFace(0.5, -0.3), texto: '≈ 80% DO CORPO', dx: -260, dy: -90 }];
         refEscala = pontoCorpo(0.5);
@@ -654,7 +654,8 @@
       corpoMesh.visible = false; nadadeira.m.visible = false;
       const linhaAlvo = 4, celAlvo = Math.floor(MICRO.porLinha / 2), cx = xCel(celAlvo), cy = yLinha(linhaAlvo);
       if (id === 'C5') {
-        plano(V(MICRO.x, MICRO.y, 0.03), V(MICRO.x, MICRO.y, 0), 14, 0.005, 2);
+        const entra = suave(CENAS[k].ini, w('eletrócitos'), t); // motivo: a fala entra no mecanismo
+        plano(V(MICRO.x, MICRO.y, 0.042 - 0.012 * entra), V(MICRO.x, MICRO.y, 0), 14, 0.005, 2);
         bancada.position.set(MICRO.x + 0.01, MICRO.y + 0.012, 0.03); bancada.intensity = 0.02;
         celulas.atualizar((r, c) => t >= w('eletrócitos') && r === linhaAlvo && c === celAlvo);
         if (t >= w('células', 0) && t < w('eletrócitos')) etiquetas = [{ ponto: V(cx, cy + MICRO.alt * 0.3, MICRO.prof / 2), texto: 'CÉLULA MUSCULAR MODIFICADA', dx: -60, dy: -330 }];
@@ -709,8 +710,8 @@
       mostrarDentro(true); bancada.position.set(-0.55, Y + 0.25, 0.55); bancada.intensity = 0.5;
       corte.definir(...CORTE_CAUDA); corte.abrir(suave(F[11], F[11] + 0.5, t));
       acender('sachs', t >= w('impulsos'));
-      const pulso = (t - w('impulsos')) % 0.9;
-      if (t >= w('impulsos')) { campoFraco.grupo.visible = true; campoFraco.crescer(suave(0, 0.5, pulso)); campoFraco.mat.opacity = 0.85 * (1 - suave(0.55, 0.9, pulso)); }
+      const PER = (F[12] - w('impulsos')) / 3, nPulso = Math.floor((t - w('impulsos')) / PER), pulso = ((t - w('impulsos')) % PER) * (0.9 / PER);
+      if (t >= w('impulsos') && nPulso < 3) { campoFraco.grupo.visible = true; campoFraco.crescer(suave(0, 0.5, pulso)); campoFraco.mat.opacity = 0.85 * (1 - suave(0.55, 0.9, pulso)); }
       if (t >= w('impulsos')) etiquetas = [
         { ponto: naFace(0.78, -0.3), texto: 'ÓRGÃO DE SACHS', dx: -200, dy: -330 },
         { ponto: V(-0.66, Y + 0.12, 0.03), texto: 'PULSOS FRACOS', dx: -120, dy: -420 },
@@ -760,6 +761,24 @@
     modoAgua(); renderer.setScissor(0, 0, 1080, 1920 - divisao); renderer.render(cena, camera);
     renderer.setScissorTest(false);
   }
+
+  // efeitos pontuais (gerados no render, por baixo da narração)
+  const PER12 = (F[12] - w('impulsos')) / 3;
+  window.SONS = [
+    { t: w('esconde'), tipo: 'clique' },
+    { t: w('espécie'), tipo: 'tic', vol: 0.8 },
+    { t: wf('860'), tipo: 'bipe', vol: 0.7 },
+    { t: w('três'), tipo: 'tic', vol: 0.8 }, { t: w('órgãos'), tipo: 'tic', vol: 0.8 }, { t: w('elétricos'), tipo: 'tic', vol: 0.8 },
+    { t: w('percorrem'), tipo: 'tic', vol: 0.8 },
+    { t: w('células', 0), tipo: 'tic', vol: 0.8 }, { t: w('eletrócitos'), tipo: 'tic', vol: 0.8 },
+    { t: w('diferença'), tipo: 'estalo', vol: 0.7 },
+    ...Array.from({ length: 10 }, (_, i) => ({ t: w('pilhas') + i * ((w('sequência') + 0.4 - w('pilhas')) / 10), tipo: 'estalo', vol: 0.45 })),
+    { t: w('ativam'), tipo: 'pulso', vol: 0.9 },
+    { t: w('descarga'), tipo: 'zap', vol: 0.9 },
+    { t: w('descarga', 1), tipo: 'tranco', vol: 1.0 },
+    ...[0, 1, 2].map((i) => ({ t: w('impulsos') + i * PER12, tipo: 'cliqueBaixo', vol: 0.45 })),
+    { t: F[12], tipo: 'clique', vol: 0.8 },
+  ];
 
   registrar({ duracao: T, renderer, cena, camera, desenhar, renderizar, cenas: CENAS, async preparar() { await texto.carregarFontes(); } });
 </script>
