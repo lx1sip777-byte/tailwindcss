@@ -40,4 +40,8 @@
 - Assinatura: barra de escala real no canto inferior esquerdo em todo plano + hachura creme em todo corte; no loop o corte se fecha e volta ao plano do lugar.
 
 ## Regras que aprendi (vá acrescentando)
--
+- Tempo das palavras: o Whisper adianta o começo das frases; sempre ajustar pelas pausas reais do áudio.
+- Bicho comprido em quadro vertical some: usar pose em curva/diagonal (ex.: enguia em "J" subindo para respirar).
+- Debaixo d'água, o que está na superfície vira silhueta preta vista de baixo: tirar do quadro.
+- Antes do render, conferir em todos os quadros (não só nos stills) que nenhuma etiqueta sai da margem ou encavala.
+- Volume: medir no arquivo entregue (AAC estéreo) e limitar já em estéreo, só o necessário.
