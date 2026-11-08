@@ -12,6 +12,14 @@ Instalação (uma vez por máquina): `cd ferramentas && npm install`, depois `no
 
 Saídas vão para `projetos/<nome>/saida/` e nunca sobrescrevem: `nome.mp4`, `nome_v2.mp4`, `nome_v3.mp4`...
 
+## Estilo do estúdio (`motor/estilo.js`)
+
+A ficha "Corte na hora azul" do CLAUDE.md em código: `PALETA`, `criarCeu`, `luzHoraAzul`,
+`criarCorte` (corte em caixa: `corte.cortar(mesh, HACHURA.estrutura|metal)`, `corte.abrir(0..1)`;
+peças paradas são cortadas com hachura, peças que se movem ficam inteiras) e `criarTexto`
+(`legenda(palavras, acesa)`, `etiquetas([{ponto, texto, dx, dy}], camera)`, `escala(ponto, camera)`).
+Precisa de `renderer.localClippingEnabled = true`. Exemplo completo: `projetos/estilo`.
+
 ## Como é um projeto
 
 `projetos/<nome>/index.html` com Three.js (veja `projetos/teste`):

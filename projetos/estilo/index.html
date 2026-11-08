@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>estilo — teste da ficha (fechadura)</title>
+  <style>
+    html, body { margin: 0; background: #141c38; overflow: hidden; }
+    #quadro { display: block; width: 1080px; height: 1920px; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "/three/build/three.module.js", "three/addons/": "/three/examples/jsm/" } }
+  </script>
+</head>
+<body>
+<script type="module">
+  // Teste de estilo: 3 planos de um vídeo hipotético "como a fechadura funciona".
+  //   0–2 s  plano inicial: a casa na hora azul, a fechadura na porta
+  //   2–4 s  o corte abre: cinco pinos (peça citada acesa)
+  //   4–6 s  chave dentro: tudo alinhado na linha de corte
+  import { criarEstudio, registrar } from '/motor/estudio.js';
+  import { PALETA as P, HACHURA, criarCeu, luzHoraAzul, criarCorte, criarTexto } from '/motor/estilo.js';
+
+  const { THREE, renderer, cena, camera } = criarEstudio({ fundo: P.ceuTopo, fov: 50 });
+  renderer.localClippingEnabled = true;
+  cena.fog = new THREE.Fog(P.neblina, 16, 75);
+  criarCeu(cena);
+  luzHoraAzul(cena);
+  const texto = criarTexto();
+
+  // ---------- ajudantes ----------
+  const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, metalness: 0, ...o });
+  const metal = (c, rough = 0.35) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: 0.85 });
+  function caixa(x0, x1, y0, y1, z0, z1, mat, pai = cena) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), mat);
+    m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+    m.castShadow = m.receiveShadow = true;
+    pai.add(m);
+    return m;
+  }
+  function textura(w, h, desenhar) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    desenhar(c.getContext('2d'), w, h);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+    return t;
+  }
+  let semente = 7;
+  const rnd = () => ((semente = (semente * 16807) % 2147483647) / 2147483647); // determinístico
+
+  // ---------- materiais ----------
+  const texReboco = textura(512, 512, (g, w, h) => {
+    g.fillStyle = P.parede; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9000; i++) { const v = 200 + rnd() * 40; g.fillStyle = `rgba(${v - 20},${v - 25},${v - 35},.07)`; g.fillRect(rnd() * w, rnd() * h, 2, 2); }
+  });
+  texReboco.wrapS = texReboco.wrapT = THREE.RepeatWrapping; texReboco.repeat.set(4, 2);
+  const mParede = std('#ffffff', { map: texReboco, roughness: 0.95 });
+  const mRodape = std('#8f877c');
+  const mBatente = std('#ece6da', { roughness: 0.6 });
+  const mPorta = std(P.madeira, { roughness: 0.55 });
+  const mConcreto = std(P.concreto, { roughness: 0.95 });
+  const mGrama = std(P.grama, { roughness: 1 });
+  const mAsfalto = std(P.asfalto, { roughness: 0.9 });
+  const mFerro = std('#23262c', { roughness: 0.5, metalness: 0.6 });
+  const mLatao = metal(P.latao, 0.3);
+  const mAco = metal(P.aco, 0.32);
+  const mNiquel = metal(P.niquel, 0.25);
+
+  // ---------- casa ----------
+  // fachada no plano z = 0.05; porta recuada (z -0.04..0); fechadura em L
+  const L = new THREE.Vector3(0.35, 1.15, -0.02);
+  const corte = criarCorte({ min: new THREE.Vector3(0.35, 1.115, -0.037), max: new THREE.Vector3(0.58, 1.185, 0.3) });
+
+  caixa(-3.6, -0.5, 0, 3.0, -0.2, 0.05, mParede);
+  corte.cortar(caixa(0.5, 3.6, 0, 3.0, -0.2, 0.05, mParede));
+  caixa(-0.5, 0.5, 2.2, 3.0, -0.2, 0.05, mParede);
+  caixa(-3.6, -0.57, 0, 0.32, 0.05, 0.065, mRodape);
+  caixa(0.57, 3.6, 0, 0.32, 0.05, 0.065, mRodape);
+  // batente e guarnição
+  caixa(-0.5, -0.45, 0.1, 2.2, -0.2, 0.05, mBatente);
+  corte.cortar(caixa(0.45, 0.5, 0.1, 2.2, -0.2, 0.05, mBatente));
+  caixa(-0.5, 0.5, 2.16, 2.2, -0.2, 0.05, mBatente);
+  caixa(-0.57, -0.5, 0.1, 2.27, 0.05, 0.07, mBatente);
+  corte.cortar(caixa(0.5, 0.57, 0.1, 2.27, 0.05, 0.07, mBatente));
+  caixa(-0.57, 0.57, 2.2, 2.27, 0.05, 0.07, mBatente);
+  // porta com almofadas
+  corte.cortar(caixa(-0.45, 0.45, 0.1, 2.16, -0.04, 0, mPorta));
+  const mAlmofada = std('#2a4d57', { roughness: 0.55 });
+  caixa(-0.33, 0.21, 1.3, 2.0, 0, 0.008, mAlmofada);
+  caixa(-0.33, 0.21, 0.28, 0.98, 0, 0.008, mAlmofada);
+  // soleira e degrau
+  caixa(-0.75, 0.75, 0, 0.1, 0.05, 0.5, mConcreto);
+  // telhado (uma água caindo para a rua) com telhas
+  const texTelha = textura(256, 256, (g, w, h) => {
+    g.fillStyle = P.telha; g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 32) {
+      g.fillStyle = 'rgba(20,8,6,.45)'; g.fillRect(0, y + 26, w, 6);
+      for (let x = 0; x < w; x += 32) { g.fillStyle = 'rgba(255,190,150,.06)'; g.fillRect(x + 4, y + 4, 12, 20); g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(x + 30, y, 2, 28); }
+    }
+  });
+  texTelha.wrapS = texTelha.wrapT = THREE.RepeatWrapping; texTelha.repeat.set(14, 10);
+  const telhado = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.08, 5.2), std('#ffffff', { map: texTelha, roughness: 0.8 }));
+  telhado.position.set(0, 3.55, -1.6);
+  telhado.rotation.x = 0.26;
+  telhado.castShadow = telhado.receiveShadow = true;
+  cena.add(telhado);
+  caixa(-4.0, 4.0, 2.88, 3.12, 0.05, 0.95, std('#e9e2d5'));        // beiral
+  caixa(-4.0, 4.0, 2.9, 3.13, 0.92, 0.97, std('#d6cec0'));         // testeira
+
+  // janelas com grade, cortina e luz de dentro
+  const texVidro = textura(128, 256, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#f6c17c'); gr.addColorStop(1, '#c9824a');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  });
+  const mVidro = new THREE.MeshStandardMaterial({ color: '#2a1a10', emissive: '#ffffff', emissiveMap: texVidro, emissiveIntensity: 0.55, roughness: 0.2 });
+  const mCortina = new THREE.MeshStandardMaterial({ color: '#3b2a22', emissive: '#e8b48a', emissiveIntensity: 0.22, roughness: 1, side: THREE.DoubleSide });
+  function janela(cx, cy, w, h) {
+    const vidro = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mVidro); vidro.position.set(cx, cy, 0.052); cena.add(vidro);
+    for (const s of [-1, 1]) {
+      const c = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.3, h * 0.96), mCortina);
+      c.position.set(cx + s * w * 0.34, cy, 0.056); cena.add(c);
+    }
+    const t = 0.06;
+    caixa(cx - w / 2 - t, cx + w / 2 + t, cy + h / 2, cy + h / 2 + t, 0.05, 0.09, mBatente);
+    caixa(cx - w / 2 - t, cx + w / 2 + t, cy - h / 2 - t, cy - h / 2, 0.05, 0.09, mBatente);
+    caixa(cx - w / 2 - t, cx - w / 2, cy - h / 2, cy + h / 2, 0.05, 0.09, mBatente);
+    caixa(cx + w / 2, cx + w / 2 + t, cy - h / 2, cy + h / 2, 0.05, 0.09, mBatente);
+    caixa(cx - 0.015, cx + 0.015, cy - h / 2, cy + h / 2, 0.05, 0.08, mBatente);
+    caixa(cx - w / 2 - 0.12, cx + w / 2 + 0.12, cy - h / 2 - 0.1, cy - h / 2 - t, 0.05, 0.16, mConcreto); // peitoril
+    const n = Math.round(w / 0.11);
+    const barras = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.008, 0.008, h + 0.1, 6), mFerro, n);
+    const m4 = new THREE.Matrix4();
+    for (let i = 0; i < n; i++) { m4.makeTranslation(cx - w / 2 + (i + 0.5) * (w / n), cy, 0.13); barras.setMatrixAt(i, m4); }
+    barras.castShadow = true; cena.add(barras);
+    caixa(cx - w / 2 - 0.02, cx + w / 2 + 0.02, cy + h / 2 + 0.03, cy + h / 2 + 0.05, 0.1, 0.16, mFerro);
+    caixa(cx - w / 2 - 0.02, cx + w / 2 + 0.02, cy - h / 2 - 0.05, cy - h / 2 - 0.03, 0.1, 0.16, mFerro);
+    const luz = new THREE.PointLight(P.janela, 0.9, 5, 2); luz.position.set(cx, cy, 0.5); cena.add(luz);
+  }
+  janela(-2.0, 1.6, 1.2, 1.0);
+  janela(2.15, 1.6, 1.2, 1.0);
+
+  // número da casa
+  const texNumero = textura(256, 160, (g, w, h) => {
+    g.fillStyle = '#1e2a33'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#c9a25a'; g.lineWidth = 6; g.strokeRect(10, 10, w - 20, h - 20);
+    g.fillStyle = '#e8dcc0'; g.font = '600 96px Archivo, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('27', w / 2, h / 2 + 6);
+  });
+  const numero = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.14, 0.012), [std('#1e2a33'), std('#1e2a33'), std('#1e2a33'), std('#1e2a33'), std('#ffffff', { map: texNumero }), std('#1e2a33')]);
+  numero.position.set(-0.85, 1.75, 0.058); cena.add(numero);
+
+  // arandela (luz-chave prática)
+  caixa(0.74, 0.86, 1.88, 2.08, 0.05, 0.08, mFerro);
+  const vidroLuz = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.16, 16), new THREE.MeshStandardMaterial({ color: '#fff2dd', emissive: P.luzQuente, emissiveIntensity: 1.1, roughness: 0.3 }));
+  vidroLuz.position.set(0.8, 1.98, 0.14); cena.add(vidroLuz);
+  caixa(0.74, 0.86, 2.06, 2.09, 0.08, 0.2, mFerro);
+  const arandela = new THREE.SpotLight(P.luzQuente, 9, 9, 1.15, 0.85, 2);
+  arandela.position.set(0.8, 1.95, 0.24);
+  arandela.target.position.set(0.0, 0.2, 1.4);
+  arandela.castShadow = true; arandela.shadow.mapSize.set(2048, 2048); arandela.shadow.bias = -0.0004; arandela.shadow.radius = 4;
+  cena.add(arandela, arandela.target);
+  const brilhoArandela = new THREE.PointLight(P.luzQuente, 0.6, 3, 2); brilhoArandela.position.set(0.8, 2.0, 0.3); cena.add(brilhoArandela);
+
+  // ---------- quintal, muro, calçada, rua ----------
+  caixa(-12, 12, -0.02, 0, -0.2, 4.0, mGrama);
+  for (let z = 0.55; z < 4.0; z += 0.62) caixa(-0.42, 0.42, 0, 0.02, z, z + 0.55, mConcreto); // pisantes
+  const mMuro = std('#c8c0b2', { map: texReboco, roughness: 0.95 });
+  caixa(-6, -0.65, 0, 0.75, 4.0, 4.16, mMuro); caixa(0.65, 6, 0, 0.75, 4.0, 4.16, mMuro);
+  caixa(-6, -0.65, 0.75, 0.79, 3.98, 4.18, mConcreto); caixa(0.65, 6, 0.75, 0.79, 3.98, 4.18, mConcreto);
+  { // grade sobre o muro
+    const xs = []; for (let x = -5.9; x < -0.7; x += 0.13) xs.push(x); for (let x = 0.72; x < 6; x += 0.13) xs.push(x);
+    const g = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.009, 0.009, 0.75, 6), mFerro, xs.length);
+    const m4 = new THREE.Matrix4(); xs.forEach((x, i) => { m4.makeTranslation(x, 1.16, 4.08); g.setMatrixAt(i, m4); });
+    g.castShadow = true; cena.add(g);
+    caixa(-6, -0.65, 1.52, 1.55, 4.06, 4.1, mFerro); caixa(0.65, 6, 1.52, 1.55, 4.06, 4.1, mFerro);
+  }
+  { // portão aberto para dentro
+    const portao = new THREE.Group(); portao.position.set(-0.62, 0, 4.08); portao.rotation.y = 1.45; cena.add(portao);
+    caixa(0, 1.2, 0.08, 0.11, -0.02, 0.02, mFerro, portao); caixa(0, 1.2, 1.5, 1.53, -0.02, 0.02, mFerro, portao);
+    const n = 10, g = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.009, 0.009, 1.42, 6), mFerro, n);
+    const m4 = new THREE.Matrix4(); for (let i = 0; i < n; i++) { m4.makeTranslation(0.06 + i * 0.12, 0.8, 0); g.setMatrixAt(i, m4); }
+    g.castShadow = true; portao.add(g);
+  }
+  const texCalcada = textura(256, 256, (g, w, h) => {
+    g.fillStyle = '#8f8b84'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(40,40,45,.55)'; g.lineWidth = 3;
+    for (let i = 0; i <= w; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, h); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(w, i); g.stroke(); }
+  });
+  texCalcada.wrapS = texCalcada.wrapT = THREE.RepeatWrapping; texCalcada.repeat.set(24, 2);
+  caixa(-12, 12, 0, 0.03, 4.16, 6.0, std('#ffffff', { map: texCalcada, roughness: 0.95 }));
+  caixa(-12, 12, 0, 0.15, 6.0, 6.15, mConcreto); // meio-fio
+  caixa(-12, 12, -0.05, 0.0, 6.15, 16, mAsfalto);
+  caixa(-12, 12, 0.0, 0.003, 10.4, 10.5, std('#c9a24a', { roughness: 0.7 })); // faixa amarela
+
+  // poste de concreto com fiação descendo até a casa
+  const poste = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.14, 8, 10), std('#9b968e', { roughness: 0.95 }));
+  poste.position.set(-1.6, 4, 5.65); poste.castShadow = true; cena.add(poste);
+  function fio(a, b, flecha, raio = 0.008) {
+    const pts = []; for (let i = 0; i <= 24; i++) { const t = i / 24; const p = a.clone().lerp(b, t); p.y -= Math.sin(Math.PI * t) * flecha; pts.push(p); }
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, raio, 5), mFerro); cena.add(m);
+  }
+  fio(new THREE.Vector3(-1.6, 6.4, 5.65), new THREE.Vector3(-1.4, 3.05, 0.95), 0.35);
+  fio(new THREE.Vector3(-1.6, 6.1, 5.65), new THREE.Vector3(-1.3, 3.0, 0.95), 0.32);
+
+  // poste de luz da rua fora do quadro: só a poça de luz quente na calçada
+  const sodio = new THREE.PointLight('#ffb36b', 5, 12, 2); sodio.position.set(3.2, 5.0, 5.4); cena.add(sodio);
+
+  // plantas (baixo-poli, determinístico)
+  const mFolhas = [std(P.folha, { flatShading: true }), std(P.folhaClara, { flatShading: true })];
+  function moita(x, z, s = 1, n = 6) {
+    for (let i = 0; i < n; i++) {
+      const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 * s * (0.7 + rnd() * 0.5), 1), mFolhas[i % 2]);
+      m.position.set(x + (rnd() - 0.5) * 0.7 * s, 0.22 * s + rnd() * 0.25 * s, z + (rnd() - 0.5) * 0.35 * s);
+      m.castShadow = m.receiveShadow = true; cena.add(m);
+    }
+  }
+  moita(-1.25, 0.35, 1.0); moita(1.35, 0.35, 0.9); moita(-3.1, 0.4, 1.1); moita(3.2, 0.4, 1.1);
+  moita(-2.0, 3.65, 0.8, 5); moita(2.2, 3.65, 0.8, 5);
+  { // vaso ao lado da porta
+    const vaso = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.11, 0.32, 14), std('#9a5a3c', { roughness: 0.9 }));
+    vaso.position.set(-0.68, 0.26, 0.32); vaso.castShadow = true; cena.add(vaso);
+    for (let i = 0; i < 9; i++) {
+      const f = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.55, 4), mFolhas[1]);
+      f.position.set(-0.68 + (rnd() - 0.5) * 0.12, 0.62, 0.32 + (rnd() - 0.5) * 0.12);
+      f.rotation.set((rnd() - 0.5) * 0.7, rnd() * 3, (rnd() - 0.5) * 0.7); f.castShadow = true; cena.add(f);
+    }
+  }
+  function arvore(x, z, h) {
+    const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.11, h * 0.55, 7), std('#4a3a2e'));
+    tronco.position.set(x, h * 0.27, z); tronco.castShadow = true; cena.add(tronco);
+    for (let i = 0; i < 7; i++) {
+      const c = new THREE.Mesh(new THREE.IcosahedronGeometry(h * 0.2 * (0.8 + rnd() * 0.4), 1), mFolhas[i % 2]);
+      c.position.set(x + (rnd() - 0.5) * h * 0.4, h * (0.62 + rnd() * 0.25), z + (rnd() - 0.5) * h * 0.3);
+      c.castShadow = true; cena.add(c);
+    }
+  }
+  arvore(-2.6, 2.4, 3.6);
+  // fundo: prédio vizinho e copas distantes
+  caixa(2.6, 7, 0, 7.5, -9, -5, std('#4b5266', { roughness: 1 }));
+  for (let i = 0; i < 6; i++) {
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.7), i % 3 === 1 ? mVidro : std('#2a3044'));
+    w.position.set(3.4 + (i % 3) * 1.3, 4.6 + Math.floor(i / 3) * 1.6, -4.99); cena.add(w);
+  }
+  for (let i = 0; i < 14; i++) arvore(-14 + i * 2.1 + rnd(), -16 - rnd() * 6, 5 + rnd() * 3);
+
+  // ---------- fechadura (escala real, em metros) ----------
+  const fech = new THREE.Group(); fech.position.copy(L); cena.add(fech);
+  const comp = 0.052, z0 = -0.026; // comprimento do cilindro e início (relativo a L)
+  // carcaça perfil europeu: corpo redondo + torre dos pinos
+  const carcRedonda = new THREE.Mesh(new THREE.CylinderGeometry(0.0085, 0.0085, comp, 48), mNiquel);
+  carcRedonda.rotation.x = Math.PI / 2; carcRedonda.position.z = z0 + comp / 2; fech.add(carcRedonda);
+  const torre = new THREE.Mesh(new THREE.BoxGeometry(0.010, 0.0245, comp), mNiquel);
+  torre.position.set(0, 0.0245 / 2, z0 + comp / 2); fech.add(torre);
+  corte.cortar(carcRedonda, HACHURA.metal); corte.cortar(torre, HACHURA.metal);
+  // tambor (gira com a chave)
+  const tambor = new THREE.Mesh(new THREE.CylinderGeometry(0.0065, 0.0065, comp + 0.0004, 48), mLatao);
+  tambor.rotation.x = Math.PI / 2; tambor.position.z = z0 + comp / 2; fech.add(tambor);
+  corte.cortar(tambor, HACHURA.metal2);
+  // espelho (roseta) e rasgo da chave na frente da porta
+  const roseta = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.026, 0.006, 48), mLatao);
+  roseta.rotation.x = Math.PI / 2; roseta.position.z = 0.02 + 0.003; fech.add(roseta);
+  corte.cortar(roseta, HACHURA.metal);
+  const rasgo = new THREE.Mesh(new THREE.PlaneGeometry(0.0018, 0.0085), new THREE.MeshBasicMaterial({ color: '#0b0d12' }));
+  rasgo.position.set(0, -0.001, 0.0268); fech.add(rasgo);
+  // lingueta (peça móvel: inteira) entrando no batente
+  const lingueta = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.018, 0.016), mAco);
+  lingueta.position.set(0.098, 0, 0); fech.add(lingueta); // de x 0,418 a 0,478: 28 mm dentro do batente
+  const testa = new THREE.Mesh(new THREE.BoxGeometry(0.003, 0.06, 0.024), mLatao);
+  testa.position.set(0.0985, 0, 0); fech.add(testa);
+  // maçaneta abaixo
+  const mac = new THREE.Group(); mac.position.set(0.33, 0.98, 0); cena.add(mac);
+  const macRoseta = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.032, 0.008, 32), mLatao); macRoseta.rotation.x = Math.PI / 2; macRoseta.position.z = 0.004; mac.add(macRoseta);
+  const macHaste = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.05, 16), mLatao); macHaste.rotation.x = Math.PI / 2; macHaste.position.z = 0.03; mac.add(macHaste);
+  const macAlavanca = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.018, 0.016), mLatao); macAlavanca.position.set(-0.058, 0, 0.055); mac.add(macAlavanca);
+  for (const o of [carcRedonda, torre, tambor, roseta, lingueta, testa, macRoseta, macHaste, macAlavanca]) { o.castShadow = o.receiveShadow = true; }
+
+  // pinos: 5 conjuntos (pino da chave em latão + pino de bloqueio em aço + mola)
+  const ZS = [-0.016, -0.009, -0.002, 0.005, 0.012].map((z) => z0 + 0.01 + (z + 0.016)); // ao longo do tambor
+  const LK = [0.0065, 0.0085, 0.0055, 0.009, 0.007]; // pinos da chave (cada um de um tamanho)
+  const LD = 0.0055, TOPO_CAMARA = 0.0225, CORTE = 0.0065, R = 0.0014;
+  const mPinoChave = metal(P.latao, 0.28), mPinoBloqueio = metal(P.aco, 0.28);
+  const pinoGeo = (l, ponta) => new THREE.LatheGeometry(
+    ponta ? [new THREE.Vector2(0, 0), new THREE.Vector2(R, 0.0008), new THREE.Vector2(R, l - 0.0002), new THREE.Vector2(R - 0.0002, l), new THREE.Vector2(0, l)]
+          : [new THREE.Vector2(0, 0), new THREE.Vector2(R - 0.0002, 0), new THREE.Vector2(R, 0.0002), new THREE.Vector2(R, l - 0.0002), new THREE.Vector2(R - 0.0002, l), new THREE.Vector2(0, l)], 28);
+  function molaGeo(l) {
+    const pts = [], voltas = 7;
+    for (let i = 0; i <= 140; i++) { const t = i / 140, a = t * voltas * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * 0.0011, t * l, Math.sin(a) * 0.0011)); }
+    return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 220, 0.00022, 6);
+  }
+  const pinos = ZS.map((z, k) => {
+    const chave = new THREE.Mesh(pinoGeo(LK[k], true), mPinoChave);
+    const bloqueio = new THREE.Mesh(pinoGeo(LD, false), mPinoBloqueio);
+    const repouso = -0.0035, comChave = CORTE - LK[k];
+    const molas = {
+      repouso: new THREE.Mesh(molaGeo(TOPO_CAMARA - (repouso + LK[k] + LD)), mAco),
+      chave: new THREE.Mesh(molaGeo(TOPO_CAMARA - (CORTE + LD)), mAco),
+    };
+    for (const o of [chave, bloqueio, molas.repouso, molas.chave]) { o.position.z = z; o.castShadow = true; fech.add(o); }
+    return { chave, bloqueio, molas, repouso, comChave, k };
+  });
+  function posicionarPinos(comChave) {
+    for (const p of pinos) {
+      const base = comChave ? p.comChave : p.repouso;
+      p.chave.position.y = base;
+      p.bloqueio.position.y = base + LK[p.k];
+      const topo = base + LK[p.k] + LD;
+      p.molas.repouso.visible = !comChave; p.molas.chave.visible = comChave;
+      (comChave ? p.molas.chave : p.molas.repouso).position.y = topo;
+    }
+  }
+  // linha de corte (só acende quando citada)
+  const linhaCorte = new THREE.Mesh(new THREE.PlaneGeometry(comp + 0.004, 0.00045), new THREE.MeshBasicMaterial({ color: P.ambar, toneMapped: false }));
+  linhaCorte.rotation.y = Math.PI / 2; linhaCorte.position.set(0.0016, CORTE, z0 + comp / 2); fech.add(linhaCorte);
+
+  // chave: lâmina com segredo (cortes na altura de cada pino) + cabeça para fora da porta
+  const chaveObj = (() => {
+    const s = new THREE.Shape();
+    const pico = 0.0016, ponta = z0 + 0.002;
+    s.moveTo(ponta, -0.0045);
+    s.lineTo(ponta, -0.0015);
+    s.lineTo(ponta + 0.002, 0.0005);
+    ZS.forEach((z, k) => {
+      const b = CORTE - LK[k];
+      s.lineTo(z - 0.0026, pico); s.lineTo(z - 0.0006, b); s.lineTo(z + 0.0006, b); s.lineTo(z + 0.0026, pico);
+    });
+    s.lineTo(0.028, pico); s.lineTo(0.029, 0.0035); s.lineTo(0.031, 0.011);
+    s.absarc(0.046, 0.0, 0.017, Math.PI * 0.85, -Math.PI * 0.85, true);
+    s.lineTo(0.029, -0.0062); s.lineTo(0.028, -0.0045);
+    s.lineTo(ponta, -0.0045);
+    const furo = new THREE.Path(); furo.absarc(0.052, 0.0, 0.004, 0, Math.PI * 2, false); s.holes.push(furo);
+    const g = new THREE.ExtrudeGeometry(s, { depth: 0.002, bevelEnabled: true, bevelThickness: 0.0003, bevelSize: 0.0003, bevelSegments: 2, curveSegments: 32 });
+    g.translate(0, 0, -0.001);
+    const m = new THREE.Mesh(g, metal(P.niquel, 0.22));
+    m.rotation.y = -Math.PI / 2; m.castShadow = true;
+    fech.add(m);
+    return m;
+  })();
+
+  // luz de bancada para o "por dentro": neutra e sem sombra
+  const bancada = new THREE.PointLight('#e6ecff', 0, 1.5, 2);
+  cena.add(bancada);
+  const bancada2 = new THREE.PointLight('#ffd9a8', 0, 1.0, 2);
+  cena.add(bancada2);
+
+  // ---------- planos ----------
+  const ALVO = new THREE.Vector3();
+  function planoCamera(pos, alvo, fov, near, far) {
+    camera.position.copy(pos); ALVO.copy(alvo); camera.lookAt(ALVO);
+    camera.fov = fov; camera.near = near; camera.far = far; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+  }
+  const mRosetaAcesa = metal(P.latao, 0.3); mRosetaAcesa.emissive.set(P.ambar); mRosetaAcesa.emissiveIntensity = 0.5;
+  const mud = (mat, emissivo) => { mat.emissive.set(P.ambar); mat.emissiveIntensity = emissivo; };
+
+  const DURACAO = 6;
+  registrar({
+    duracao: DURACAO, renderer, cena, camera,
+    async preparar() { await texto.carregarFontes(); },
+    desenhar(t) {
+      const plano = t < 2 ? 0 : t < 4 ? 1 : 2;
+      const p = (L.clone().add(new THREE.Vector3(0.0016, 0, 0)));
+      if (plano === 0) {
+        planoCamera(new THREE.Vector3(0.95, 1.45, 9.6), new THREE.Vector3(0.15, 1.8, 0), 50, 0.1, 200);
+        corte.abrir(0); posicionarPinos(false); chaveObj.visible = false; linhaCorte.visible = false;
+        bancada.intensity = 0; bancada2.intensity = 0;
+        mud(mLatao, 0.0); roseta.material = mLatao;
+        mud(mPinoChave, 0); mud(mPinoBloqueio, 0);
+        texto.legenda(['a', 'fechadura'], 1);
+        texto.etiquetas([], camera);
+        texto.escala(new THREE.Vector3(0, 1.15, 0), camera);
+        // a peça citada (fechadura) acende de leve
+        roseta.material = mRosetaAcesa;
+      } else if (plano === 1) {
+        planoCamera(new THREE.Vector3(0.468, 1.196, 0.072), new THREE.Vector3(0.352, 1.153, -0.008), 34, 0.002, 30);
+        corte.abrir(1); posicionarPinos(false); chaveObj.visible = false; linhaCorte.visible = false;
+        roseta.material = mLatao;
+        bancada.position.set(0.44, 1.2, 0.06); bancada.intensity = 0.035;
+        bancada2.position.set(0.40, 1.13, 0.05); bancada2.intensity = 0.012;
+        mud(mPinoChave, 0.32); mud(mPinoBloqueio, 0.32);
+        texto.legenda(['cinco', 'pinos'], 1);
+        const pz = pinos[2];
+        texto.etiquetas([
+          { ponto: new THREE.Vector3(L.x + 0.0012, L.y + pz.repouso + LK[2] + LD * 0.5, L.z + ZS[2]), texto: 'PINO · Ø 3 mm', dx: 70, dy: -420 },
+          { ponto: new THREE.Vector3(L.x + 0.0012, L.y + 0.0185, L.z + ZS[4]), texto: 'MOLA', dx: -70, dy: -250 },
+          { ponto: new THREE.Vector3(L.x + 0.0002, L.y - 0.0045, L.z + ZS[1]), texto: 'TAMBOR', dx: -130, dy: 230 },
+        ], camera);
+        texto.escala(p, camera);
+      } else {
+        planoCamera(new THREE.Vector3(0.448, 1.1575, -0.0195), new THREE.Vector3(0.35, 1.1555, -0.0205), 36, 0.002, 30);
+        corte.abrir(1); posicionarPinos(true); chaveObj.visible = true; linhaCorte.visible = true;
+        roseta.material = mLatao;
+        bancada.position.set(0.43, 1.19, 0.0); bancada.intensity = 0.03;
+        bancada2.position.set(0.42, 1.13, -0.04); bancada2.intensity = 0.01;
+        mud(mPinoChave, 0); mud(mPinoBloqueio, 0);
+        texto.legenda(['tudo', 'alinhado'], 1);
+        texto.etiquetas([
+          { ponto: new THREE.Vector3(L.x + 0.0017, L.y + CORTE, L.z + ZS[4] + 0.004), texto: 'LINHA DE CORTE', dx: 40, dy: -330 },
+          { ponto: new THREE.Vector3(L.x + 0.0012, L.y - 0.003, L.z + ZS[2]), texto: 'CHAVE', dx: 150, dy: 100 },
+        ], camera);
+        texto.escala(p, camera);
+      }
+    },
+  });
+</script>
+</body>
+</html>

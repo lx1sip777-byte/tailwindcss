@@ -1,4 +1,5 @@
-// Servidor local: entrega a pasta do projeto em /, o Three.js em /three/ e o motor em /motor/.
+// Servidor local: entrega a pasta do projeto em /, o Three.js em /three/, o motor em /motor/
+// e os pacotes npm (fontes etc.) em /pacotes/.
 // Como comando: node ferramentas/servidor.mjs projetos/teste  → abre a prévia em http://localhost:5173
 import http from 'node:http';
 import fs from 'node:fs';
@@ -19,6 +20,7 @@ export function iniciarServidor(pastaProjeto, porta = 0) {
   const raizes = [
     ['/three/', path.join(AQUI, 'node_modules', 'three')],
     ['/motor/', path.join(AQUI, 'motor')],
+    ['/pacotes/', path.join(AQUI, 'node_modules')], // fontes (@fontsource) e outras libs
     ['/', path.resolve(pastaProjeto)],
   ];
   const servidor = http.createServer((req, res) => {
